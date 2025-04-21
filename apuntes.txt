@@ -1,0 +1,323 @@
+--- arreglar el error
+modificar eslint.config.mjs
+
+agregar en rules:
+
+      "prettier/prettier":
+        ["error",
+          {
+            "endOfLine": "auto"
+          }
+        ]
+
+https://github.com/creativetimofficial/soft-ui-dashboard-react/issues/6
+
+si tengo problemas con el linter en vscode, solo ejecutar
+npm run lint o npm run format (lint para eslint format para pettier)
+
+
+Los controladores son los encargados de recibir las peticiones de nuestra aplicacion y cada controlador tiene una responsabilidad en especifico,
+
+se interactua mediante http
+
+los decorators, le dicen a nest, como se debe comportar una clase respecto al framework.
+
+
+GET
+en el hola mundo, ese "hello world" tambien es manejado por un controlador, el cual es app.controller.ts, para decirle a un metodo que responda a una peticion es con el decorador.
+
+
+PARAMETROS es con el decorator @Param
+Como recibir parametros?
+
+  @Get('products/:id')
+  getProduct(@Param() { id }): string {
+    return 'product id: ' + id;
+  }
+Es mejor pasarle ya los parametros desestructurados, como en las props de react.
+
+
+QUERY PARAMETERS o los parametros de url de consula.
+tambien existe un decorador llamado @Query
+
+  @Get('products')
+  getProducts(
+    @Query('limit') limit: number = 100,
+    @Query('offset') offset: number = 0,
+  ): string {
+    return 'products: ' + limit + ' offset: ' + offset;
+  }
+}
+
+y asi, va a traer ya los valores que le pasemos por parametro de url
+
+Que pasa si hay choques entre rutas
+  @Get('products/:id')
+  getProduct(@Param() { id }): string {
+    return 'product id: ' + id;
+  }
+
+  @Get('products/filter')
+  getProductsFilter(): string {
+    return 'soy el filtro de los productos';
+  }
+
+se pone mas arriba las que son estaticas, en este caso, primero debe ir la de filter porque 
+
+
+
+CONTROLADORES
+nest debe cumplir con single responsability
+
+para eso nest deja crear controladores desde la terminal.
+
+para crear un controlador en nest es con
+nest g co <nombre_controlador>
+
+ejemplo:
+nest g co products
+
+ese comando lo que me crea es una carpeta llamada products y ahi adentro crea el controlador y el archivo de testing.
+
+lo mejor para organizar nestjs es crear una carpeta controllers, y ahi colocar todos los controladores que necesitemos, entonces, para eso el comando adecuado seria:
+nest g co controllers/products  >>> me crearia una carpeta llamada controllers, pero adentro de ahi otra carpeta llamada products
+
+para evitar esto 
+
+nest g co controllers/products --flat
+
+la ventaja de hacerlo mediante comando es que ya lo integra todo y no tengo que decirle al main que lo use.
+
+notece que en cada controlador tiene el decorador @Controller() < o asi lo tenia el main
+
+si revisamos el products controller lo tiene asi @Controller('products') es decir que para llamar a cualquiera de sus endpoints, es con  /products/cualquierendpoint que quiera
+
+
+
+POST
+Tambien se utiliza el decorador post
+
+
+SERVICIOS EN NEST
+Los servicios tiene el decorador @Injectable, porque usamos el principio de inyeccion de dependencias.
+
+para crear servicios es tambien como crear controladores, a traves de la cli 
+nest g s services/products --flat 
+
+los servicios, creo que son la capa que se conecta a la base de datos.
+
+los servicios son el otro 50% de los controladores, los controladores siempre dependen de uno o mas servicios.
+
+para integrar un service es mediante el constructor a los controladores, de esa forma es que se usa, de tal forma que los controladores simplemente se encarguen de llamar a los metodos del servicio. como un private readonly de preferencia.
+
+
+MANEJO DE EXCEPCIONES EN NEST.
+Es mediante la libreria NotFoundException.
+
+
+
+PIPES
+tienen las funciones de transformar y validar informacion.
+todo lo que llega mediante la url es un string a diferencia de lo que llega mediante el body, que ahi si respeta el tipo que sea.
+
+Nos ahorran tener que hacer consultas a la base de datos
+
+en nest es ParseIntPipe y lo unique que hay que hacer es pasarlo como 2do parametro del @Param ParseIntPipe esto sirve para que siempre le pase un numero como id en este caso
+
+
+
+
+SERVICIOS EN NEST
+Los servicios tiene el decorador @Injectable, porque usamos el principio de inyeccion de dependencias.
+
+para crear servicios es tambien como crear controladores, a traves de la cli 
+nest g s services/products --flat 
+
+los servicios, creo que son la capa que se conecta a la base de datos.
+
+los servicios son el otro 50% de los controladores, los controladores siempre dependen de uno o mas servicios.
+
+para integrar un service es mediante el constructor a los controladores, de esa forma es que se usa, de tal forma que los controladores simplemente se encarguen de llamar a los metodos del servicio. como un private readonly de preferencia.
+
+
+MANEJO DE EXCEPCIONES EN NEST.
+Es mediante la libreria NotFoundException, BadRequestExcepcion, y cualquiera de las que traiga nest.
+
+
+
+PIPES
+tienen las funciones de transformar y validar informacion.
+todo lo que llega mediante la url es un string a diferencia de lo que llega mediante el body, que ahi si respeta el tipo que sea.
+
+Nos ahorran tener que hacer consultas a la base de datos
+
+en nest es ParseIntPipe y lo unique que hay que hacer es pasarlo como 2do parametro del @Param ParseIntPipe esto sirve para que siempre le pase un numero como id en este caso
+
+para componentes o cosas que pueden compartirse en toda la aplicacion, es mejor crear una carpeta llamada common
+
+para crear yo mi propio pipe es con
+nest g pipe common/parse-int
+
+y basicamente lo que se escribe en un pipe, es una logica para convertir un valor en otro, por ejemplo podria usar un pipe para convertir un string en un numero, o podria usar un pipe para convertir un numero a literal, basicamente los pipes convierten un valor en otro valors
+
+DTO
+significa Data Transfer Object, es un patron que se utiliza para manejar los datos de la base  de datos en el backend
+
+CLASS VALIDATOR
+npm i class-validator class-transformer
+para usar class validator, ademas de ponerselo los decoradores a los DTO, hay que importarlo al main.ts
+import { ValidationPipe } from '@nestjs/common';
+  app.useGlobalPipes(new ValidationPipe());
+
+Eliminar los parámetros recibidos que no estén definidos en los DTO
+ whitelist: true,
+Informar a la API que se está enviando un atributo no válido
+ forbidNonWhitelisted: true,
+
+
+
+MODULOS
+nest g mo nombre del modulo
+
+
+INTERACCION ENTREMODULOS
+Si un modulo necesita usar el servicio de otro modulo, simplemente lo debe inyectar como dependencia, tal cual como el controller inyecta a su servicio, es decir, si un servicio requiere del servicio de otro modulo, enotnces simplemente lo inyectamos como en el controller
+
+adicionalmente si un modulo A, quiere usar un servicio del modulo B, entonces, el modulo B debe exportar su servicio, en su *.module.ts
+ahi donde tiene providres, controller, agregar un nuevo campo exports, y ahi colocar el servicio que se quiera exportar
+
+y el modulo A, debe importarlo, y colocar ese servicio en su imports
+
+
+USE VALUE
+si necesitamos pasar un apikey por ejemplo a varias partes,
+en el modulo, que escribamos la apikey, en la parte de providers,
+
+agregamos
+const apikey = 332;
+,
+{
+  provide: 'API_KEY',
+  useValue: apikey
+}
+
+y para que algun servicio lo use, hay que importar
+import { Inject } from '@nestjs/common';
+
+y para inyectarlo, es mediante el constructor, pero se inyecta de forma diferente
+en el constructor(@Inject('API_KEY') private apikey: string) (le puse 'API_KEY', porque eso configure en el provide)
+
+configurar variables de produccion ya es de otra manera, mediante setear variables de entorno de produccion de nodejs.
+
+ese inject solo se puede usar en el modulo especifico, si queremos usar esaapikey en otro modulo que no sea el que he configurado, me va a dar error.
+
+hay que importar a global 
+import { global } from '@nestjs/common';
+
+y hay que decirle al modulo que sea global
+@Global
+
+lo unico que habria que hacer es hacer la misma configuracion de la apikey, pero en el modulo global, con la diferencia, de que hay que darle exports, en el caso que tenemos
+
+exports: ['API_KEY']
+
+
+MODULO DE CONFIGURACION
+para configurar al modulo de configuracion, hay que instalar
+npm install @nestjs/config
+y ahi colocar el .env
+
+para que nestjs lea el .env, nos vamos al app.module
+import { ConfigModule } from '@nestjs/config';
+
+y colocarlo, en los imports del module
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      envFilePath: '.env',
+      isGlobal: true,
+    }),
+  ],
+  controllers: ConstantsConfig.controllerList,
+  providers: ConstantsConfig.serviceList,
+})
+export class AppModule {}
+
+y ahi en su forRoot({
+  //le decimos que lea el .env
+  envFilePath: '.env'
+})
+
+y ahora, esta es una mejor forma de traer las api keys que la anterior, pero para hacerlo de esta manera, en lo modulos simplemente
+
+import { ConfigService } from '@nestjs/config';
+
+en todos los servicios que necesitemos
+y si lo inyectamos mediante el constructor
+constructor( private configService: ConfigService );
+
+y para utilizarlo, es solo ver los nombres que he usado en el .env
+
+const apikey = this.configService.get('API_KEY')  (si es que en el .env lo deje con ese nombre);
+
+para el dinamismo se puede hacer con un objeto 
+export const enviroments = {
+  dev: '.env',
+  stag: '.stag.env',
+  prod: '.prod.env',
+};
+y con el process.env.NODE_ENV
+
+
+
+como al hacer .get(nombre) puede haber error, lo mejor es hacr esto
+
+
+import { registerAs } from '@nestjs/config';
+
+export default registerAs('config', () => {
+  return {
+    database: {
+      name: process.env.DATABASE_NAME,
+      port: process.env.DATABASE_PORT,
+    },
+    apiKey: process.env.API_KEY,
+  };
+});
+
+
+y es solo traer el config al archvio y en vez de 
+import { ConfigService } from '@nestjs/config';
+
+ahora sera
+import { ConfigType } from '@nestjs/config';
+
+y para inyectar la dependecia
+
+import { Controller, Inject } from '@nestjs/common';
+import { ConfigType } from '@nestjs/config';
+import config from './config';
+
+@Controller()
+export class AppController {
+
+  constructor(
+    @Inject(config.KEY) private configService: ConfigType<typeof config>
+  ) {}
+  
+  getEnvs(): string {
+    const apiKey = this.configService.apiKey;
+    const name = this.configService.database.name;
+    return `Envs: ${apiKey} ${name}`;
+  }
+}
+
+pero para que funcione, hay que cargarlo en el ConfigModule.forRoot(
+  {
+    ...,
+    load: [config]
+  }
+)
+
+CONEXION CON LA BASE DE DATOS
+npm i pg
