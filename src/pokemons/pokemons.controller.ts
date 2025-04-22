@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Post,
   Put,
@@ -42,6 +44,7 @@ export class PokemonsController {
   }
 
   @Post(':id/capture')
+  @HttpCode(HttpStatus.OK)
   capture(@Param('id') id: string, @Body() body: CapturePokemonDto) {
     return this.pokemonsService.capture(id, body.trainerId);
   }

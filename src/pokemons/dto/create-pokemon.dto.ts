@@ -28,10 +28,6 @@ export class CreatePokemonDto {
   @ApiProperty({ description: 'Type of the Pokemon' })
   readonly typeId: string;
 
-  // @IsUUID()
-  // @ApiProperty({ description: 'Trainer of the Pokemon' })
-  // readonly trainerId: string;
-
   @IsNumber()
   @IsPositive()
   @ApiProperty({ description: 'Attack power of the Pokemon' })
