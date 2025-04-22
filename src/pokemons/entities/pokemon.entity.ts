@@ -1,4 +1,12 @@
-import { PrimaryGeneratedColumn, Column, Entity } from 'typeorm';
+import {
+  PrimaryGeneratedColumn,
+  Column,
+  Entity,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
+import { Type } from '../../types/entities/type.entity';
+import { Trainer } from '../../trainers/entities/trainer.entity';
 
 @Entity('pokemons')
 export class Pokemon {
@@ -11,11 +19,13 @@ export class Pokemon {
   @Column({ type: 'int' })
   level: number;
 
-  @Column({ type: 'uuid' })
-  typeId: string;
+  @ManyToOne(() => Type, (type) => type.pokemons, { nullable: false })
+  @JoinColumn({ name: 'typeId' })
+  type: Type;
 
-  @Column({ type: 'uuid', nullable: true, default: null })
-  trainerId: string | null;
+  @ManyToOne(() => Trainer, (trainer) => trainer.pokemons, { nullable: true })
+  @JoinColumn({ name: 'trainerId' })
+  trainer: Trainer | null;
 
   @Column({ type: 'int' })
   attack: number;
@@ -28,4 +38,7 @@ export class Pokemon {
 
   @Column({ type: 'boolean' })
   isLegendary: boolean;
+
+  @Column({ type: 'uuid', nullable: false })
+  typeId: string;
 }

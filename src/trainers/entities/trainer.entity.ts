@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Pokemon } from '../../pokemons/entities/pokemon.entity';
 
 @Entity('trainers')
 export class Trainer {
@@ -19,4 +20,7 @@ export class Trainer {
 
   @Column({ type: 'int' })
   badges: number;
+
+  @OneToMany(() => Pokemon, (pokemon) => pokemon.trainer)
+  pokemons: Pokemon[];
 }

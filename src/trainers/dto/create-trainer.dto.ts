@@ -1,4 +1,11 @@
-import { IsNotEmpty, IsNumber, IsPositive, IsString } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsPositive,
+  IsString,
+  Max,
+  Min,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateTrainerDto {
@@ -14,6 +21,8 @@ export class CreateTrainerDto {
 
   @IsNumber()
   @IsPositive()
+  @Min(10)
+  @Max(120)
   @ApiProperty({ description: 'Age of the Trainer' })
   readonly age: number;
 

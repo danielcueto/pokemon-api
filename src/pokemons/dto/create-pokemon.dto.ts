@@ -48,6 +48,6 @@ export class CreatePokemonDto {
   readonly speed: number;
 
   @IsBoolean()
-  @ApiProperty({ description: 'Is the Pokemon legendary?' })
-  readonly isLegendary: boolean;
+  @ApiProperty({ description: 'Is the Pokemon legendary?', default: false })
+  readonly isLegendary: boolean = false;
 }

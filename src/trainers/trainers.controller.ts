@@ -10,6 +10,7 @@ import {
 import { TrainersService } from './trainers.service';
 import { CreateTrainerDto } from './dto/create-trainer.dto';
 import { UpdateTrainerDto } from './dto/update-trainer.dto';
+import { Pokemon } from '../pokemons/entities/pokemon.entity';
 
 @Controller('trainers')
 export class TrainersController {
@@ -38,5 +39,10 @@ export class TrainersController {
   @Put(':id')
   update(@Param('id') id: string, @Body() trainerDto: UpdateTrainerDto) {
     return this.trainersService.update(id, trainerDto);
+  }
+
+  @Get(':id/pokemons')
+  async getPokemons(@Param('id') id: string): Promise<Pokemon[]> {
+    return this.trainersService.getPokemonsByTrainerId(id);
   }
 }

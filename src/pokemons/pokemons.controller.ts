@@ -10,6 +10,7 @@ import {
 import { PokemonsService } from './pokemons.service';
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
+import { CapturePokemonDto } from './dto/capture-pokemon.dto';
 
 @Controller('pokemons')
 export class PokemonsController {
@@ -38,5 +39,20 @@ export class PokemonsController {
   @Put(':id')
   update(@Param('id') id: string, @Body() pokemonDto: UpdatePokemonDto) {
     return this.pokemonsService.update(id, pokemonDto);
+  }
+
+  @Post(':id/capture')
+  capture(@Param('id') id: string, @Body() body: CapturePokemonDto) {
+    return this.pokemonsService.capture(id, body.trainerId);
+  }
+
+  @Post(':id/level-up')
+  levelUp(@Param('id') id: string) {
+    return this.pokemonsService.levelUp(id);
+  }
+
+  @Post(':id/release')
+  release(@Param('id') id: string) {
+    return this.pokemonsService.release(id);
   }
 }

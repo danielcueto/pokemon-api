@@ -1,9 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { Repository } from 'typeorm';
 import { Trainer } from './entities/trainer.entity';
+import { Pokemon } from '../pokemons/entities/pokemon.entity';
 import { CreateTrainerDto } from './dto/create-trainer.dto';
 import { UpdateTrainerDto } from './dto/update-trainer.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 
 @Injectable()
 export class TrainersService {
@@ -39,5 +40,19 @@ export class TrainersService {
     const trainer = await this.getById(id);
     this.trainersRepository.merge(trainer, updateTrainerDto);
     return this.trainersRepository.save(trainer);
+  }
+
+  // trainers.service.ts
+  async getPokemonsByTrainerId(id: string): Promise<Pokemon[]> {
+    const trainer = await this.trainersRepository.findOne({
+      where: { id },
+      relations: ['pokemons'], // Asegúrate que la relación esté definida como OneToMany
+    });
+
+    if (!trainer) {
+      throw new NotFoundException(`Entrenador con ID ${id} no encontrado`);
+    }
+
+    return trainer.pokemons;
   }
 }
