@@ -4,12 +4,12 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
   Post,
   Put,
 } from '@nestjs/common';
 import { PokemonsService } from './pokemons.service';
-import { CreatePokemonDto, UpdatePokemonDto } from './pokemon.dto';
+import { CreatePokemonDto } from './dto/create-pokemon.dto';
+import { UpdatePokemonDto } from './dto/update-pokemon.dto';
 
 @Controller('pokemons')
 export class PokemonsController {
@@ -21,8 +21,8 @@ export class PokemonsController {
   }
 
   @Get(':id')
-  getById(@Param('id', ParseIntPipe) id: string) {
-    return this.pokemonsService.getById(+id);
+  getById(@Param('id') id: string) {
+    return this.pokemonsService.getById(id);
   }
 
   @Post()
@@ -31,15 +31,12 @@ export class PokemonsController {
   }
 
   @Delete(':id')
-  delete(@Param('id', ParseIntPipe) id: string) {
-    return this.pokemonsService.delete(+id);
+  delete(@Param('id') id: string) {
+    return this.pokemonsService.delete(id);
   }
 
   @Put(':id')
-  update(
-    @Param('id', ParseIntPipe) id: string,
-    @Body() pokemonDto: UpdatePokemonDto,
-  ) {
-    return this.pokemonsService.update(+id, pokemonDto);
+  update(@Param('id') id: string, @Body() pokemonDto: UpdatePokemonDto) {
+    return this.pokemonsService.update(id, pokemonDto);
   }
 }

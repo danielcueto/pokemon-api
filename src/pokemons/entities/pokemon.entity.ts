@@ -2,8 +2,8 @@ import { PrimaryGeneratedColumn, Column, Entity } from 'typeorm';
 
 @Entity('pokemons')
 export class Pokemon {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column({ type: 'varchar', length: 100 })
   name: string;
@@ -11,11 +11,11 @@ export class Pokemon {
   @Column({ type: 'int' })
   level: number;
 
-  @Column({ type: 'int' })
-  typeId: number;
+  @Column({ type: 'uuid' })
+  typeId: string;
 
-  @Column({ type: 'int' })
-  trainerId: number;
+  @Column({ type: 'uuid', nullable: true, default: null })
+  trainerId: string | null;
 
   @Column({ type: 'int' })
   attack: number;

@@ -20,6 +20,7 @@ import { Global, Module } from '@nestjs/common';
         database: 'pokemondb',
         entities: [__dirname + '/../**/*.entity{.ts,.js}'],
         synchronize: true,
+        autoLoadEntities: true,
       }),
     }),
   ],

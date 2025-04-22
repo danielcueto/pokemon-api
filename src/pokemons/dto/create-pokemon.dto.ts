@@ -4,8 +4,11 @@ import {
   IsBoolean,
   IsNotEmpty,
   IsPositive,
+  Min,
+  Max,
+  IsUUID,
 } from 'class-validator';
-import { ApiProperty, PartialType } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreatePokemonDto {
   @IsString()
@@ -15,17 +18,19 @@ export class CreatePokemonDto {
 
   @IsNumber()
   @IsPositive()
+  @Min(1)
+  @Max(100)
   @ApiProperty({ description: 'Level of the Pokemon' })
   readonly level: number;
 
-  @IsString()
+  @IsUUID()
   @IsNotEmpty()
   @ApiProperty({ description: 'Type of the Pokemon' })
-  readonly typeId: number;
+  readonly typeId: string;
 
-  @IsString()
-  @ApiProperty({ description: 'Trainer of the Pokemon' })
-  readonly trainerId: number;
+  // @IsUUID()
+  // @ApiProperty({ description: 'Trainer of the Pokemon' })
+  // readonly trainerId: string;
 
   @IsNumber()
   @IsPositive()
@@ -46,5 +51,3 @@ export class CreatePokemonDto {
   @ApiProperty({ description: 'Is the Pokemon legendary?' })
   readonly isLegendary: boolean;
 }
-
-export class UpdatePokemonDto extends PartialType(CreatePokemonDto) {}

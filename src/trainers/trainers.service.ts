@@ -1,60 +1,43 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Trainer } from './trainer.entity';
-import { CreateTrainerDto, UpdateTrainerDto } from './trainer.dto';
+import { Trainer } from './entities/trainer.entity';
+import { CreateTrainerDto } from './dto/create-trainer.dto';
+import { UpdateTrainerDto } from './dto/update-trainer.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class TrainersService {
-  private trainers: Trainer[] = [
-    {
-      id: 1,
-      name: 'Ash',
-      second_name: 'Ketchum',
-      age: 10,
-      region: 'Kanto',
-      badges: 8,
-    },
-    {
-      id: 2,
-      name: 'Misty',
-      second_name: 'Waterflower',
-      age: 12,
-      region: 'Kanto',
-      badges: 3,
-    },
-  ];
+  constructor(
+    @InjectRepository(Trainer) private trainersRepository: Repository<Trainer>,
+  ) {}
 
-  getAll(): Trainer[] {
-    return this.trainers;
+  getAll(): Promise<Trainer[]> {
+    return this.trainersRepository.find();
   }
 
-  getById(id: number): Trainer {
-    const trainer = this.trainers.find((trainer) => trainer.id === id);
+  async getById(id: string): Promise<Trainer> {
+    const trainer = await this.trainersRepository.findOneBy({ id });
     if (!trainer) {
       throw new NotFoundException(`El trainer con el id ${id}, no existe`);
     }
     return trainer;
   }
 
-  create(trainer: CreateTrainerDto): Trainer {
-    const newTrainer: Trainer = { id: this.trainers.length + 1, ...trainer };
-    this.trainers.push(newTrainer);
-    return newTrainer;
+  create(trainer: CreateTrainerDto): Promise<Trainer> {
+    const newTrainer: Trainer = this.trainersRepository.create(trainer);
+    return this.trainersRepository.save(newTrainer);
   }
 
-  delete(id: number): void {
-    const index = this.trainers.findIndex((trainer) => trainer.id === id);
-    if (index === -1) {
-      throw new NotFoundException(`El trainer con el id ${id}, no existe`);
-    }
-    this.trainers.splice(index, 1);
+  delete(id: string): Promise<void> {
+    return this.trainersRepository.delete(id).then(() => {});
   }
 
-  update(id: number, trainer: UpdateTrainerDto): Trainer {
-    const index = this.trainers.findIndex((trainer) => trainer.id === id);
-    if (index === -1) {
-      throw new NotFoundException(`El trainer con el id ${id}, no existe`);
-    }
-    this.trainers[index] = { ...this.trainers[index], ...trainer };
-    return this.trainers[index];
+  async update(
+    id: string,
+    updateTrainerDto: UpdateTrainerDto,
+  ): Promise<Trainer> {
+    const trainer = await this.getById(id);
+    this.trainersRepository.merge(trainer, updateTrainerDto);
+    return this.trainersRepository.save(trainer);
   }
 }

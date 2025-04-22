@@ -2,14 +2,14 @@ import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('trainers')
 export class Trainer {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column({ type: 'varchar', length: 100 })
   name: string;
 
   @Column({ type: 'varchar', length: 100 })
-  second_name: string;
+  secondName: string;
 
   @Column({ type: 'int' })
   age: number;

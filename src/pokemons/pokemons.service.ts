@@ -1,66 +1,73 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { Pokemon } from './pokemon.entity';
-import { CreatePokemonDto, UpdatePokemonDto } from './pokemon.dto';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
+import { CreatePokemonDto } from './dto/create-pokemon.dto';
+import { UpdatePokemonDto } from './dto/update-pokemon.dto';
+import { Pokemon } from './entities/pokemon.entity';
+import { TypesService } from '../types/types.service';
 
 @Injectable()
 export class PokemonsService {
-  private pokemons: Pokemon[] = [
-    {
-      id: 1,
-      name: 'Pikachu',
-      level: 5,
-      typeId: 1,
-      trainerId: 3,
-      attack: 55,
-      defense: 40,
-      speed: 90,
-      isLegendary: false,
-    },
-    {
-      id: 2,
-      name: 'Charizard',
-      level: 36,
-      typeId: 4,
-      trainerId: 2,
-      attack: 84,
-      defense: 78,
-      speed: 100,
-      isLegendary: false,
-    },
-  ];
+  constructor(
+    @InjectRepository(Pokemon) private pokemonsRepository: Repository<Pokemon>,
+    private readonly typesService: TypesService,
+  ) {}
 
-  getAll(): Pokemon[] {
-    return this.pokemons;
+  getAll(): Promise<Pokemon[]> {
+    return this.pokemonsRepository.find();
   }
 
-  getById(id: number): Pokemon {
-    const pokemon = this.pokemons.find((pokemon) => pokemon.id === id);
+  async getById(id: string): Promise<Pokemon> {
+    const pokemon = await this.pokemonsRepository.findOneBy({ id });
     if (!pokemon) {
       throw new NotFoundException(`El Pokemon con el id: ${id}, no existe`);
     }
     return pokemon;
   }
 
-  create(pokemon: CreatePokemonDto): Pokemon {
-    const newPokemon: Pokemon = { id: this.pokemons.length + 1, ...pokemon };
-    this.pokemons.push(newPokemon);
-    return newPokemon;
+  async create(pokemon: CreatePokemonDto): Promise<Pokemon> {
+    const type = await this.typesService.findOne(pokemon.typeId);
+    if (!type) {
+      throw new NotFoundException(
+        `El tipo con el id: ${pokemon.typeId}, no existe`,
+      );
+    }
+    const newPokemon = this.pokemonsRepository.create(pokemon);
+    return this.pokemonsRepository.save(newPokemon);
   }
 
-  delete(id: number): void {
-    const index = this.pokemons.findIndex((pokemon) => pokemon.id === id);
-    if (index === -1) {
-      throw new NotFoundException(`El Pokemon con el id: ${id}, no existe`);
+  async delete(id: string): Promise<void> {
+    const pokemon = await this.getById(id);
+
+    if (!pokemon) {
+      throw new NotFoundException(`El Pokémon con ID ${id} no existe.`);
     }
-    this.pokemons.splice(index, 1);
+
+    if (pokemon.trainerId) {
+      throw new BadRequestException(
+        'No se puede eliminar un Pokémon capturado. Libéralo primero.',
+      );
+    }
+
+    await this.pokemonsRepository.delete(id);
   }
 
-  update(id: number, pokemon: UpdatePokemonDto): Pokemon {
-    const index = this.pokemons.findIndex((pokemon) => pokemon.id === id);
-    if (index === -1) {
-      throw new NotFoundException(`El Pokemon con el id: ${id}, no existe`);
+  async update(
+    id: string,
+    updatePokemonDto: UpdatePokemonDto,
+  ): Promise<Pokemon> {
+    if ('typeId' in updatePokemonDto) {
+      throw new BadRequestException(
+        'No puedes modificar el tipo de un Pokemon',
+      );
     }
-    this.pokemons[index] = { ...this.pokemons[index], ...pokemon };
-    return this.pokemons[index];
+    const pokemon = await this.getById(id);
+    this.pokemonsRepository.merge(pokemon, updatePokemonDto);
+    return this.pokemonsRepository.save(pokemon);
   }
 }

@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsNumber, IsPositive, IsString } from 'class-validator';
-import { ApiProperty, PartialType } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateTrainerDto {
   @IsString()
@@ -10,7 +10,7 @@ export class CreateTrainerDto {
   @IsString()
   @IsNotEmpty()
   @ApiProperty({ description: 'First name of the Trainer' })
-  readonly second_name: string;
+  readonly secondName: string;
 
   @IsNumber()
   @IsPositive()
@@ -19,7 +19,7 @@ export class CreateTrainerDto {
 
   @IsString()
   @IsNotEmpty()
-  @ApiProperty({ description: 'Email of the Trainer' })
+  @ApiProperty({ description: 'Region of the Trainer' })
   readonly region: string;
 
   @IsNumber()
@@ -27,5 +27,3 @@ export class CreateTrainerDto {
   @ApiProperty({ description: 'Number of badges the Trainer has' })
   readonly badges: number;
 }
-
-export class UpdateTrainerDto extends PartialType(CreateTrainerDto) {}

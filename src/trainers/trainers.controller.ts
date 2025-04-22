@@ -4,12 +4,12 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
   Post,
   Put,
 } from '@nestjs/common';
 import { TrainersService } from './trainers.service';
-import { CreateTrainerDto, UpdateTrainerDto } from './trainer.dto';
+import { CreateTrainerDto } from './dto/create-trainer.dto';
+import { UpdateTrainerDto } from './dto/update-trainer.dto';
 
 @Controller('trainers')
 export class TrainersController {
@@ -21,8 +21,8 @@ export class TrainersController {
   }
 
   @Get(':id')
-  getById(@Param('id', ParseIntPipe) id: string) {
-    return this.trainersService.getById(+id);
+  getById(@Param('id') id: string) {
+    return this.trainersService.getById(id);
   }
 
   @Post()
@@ -31,15 +31,12 @@ export class TrainersController {
   }
 
   @Delete(':id')
-  delete(@Param('id', ParseIntPipe) id: string) {
-    return this.trainersService.delete(+id);
+  delete(@Param('id') id: string) {
+    return this.trainersService.delete(id);
   }
 
   @Put(':id')
-  update(
-    @Param('id', ParseIntPipe) id: string,
-    @Body() trainerDto: UpdateTrainerDto,
-  ) {
-    return this.trainersService.update(+id, trainerDto);
+  update(@Param('id') id: string, @Body() trainerDto: UpdateTrainerDto) {
+    return this.trainersService.update(id, trainerDto);
   }
 }
