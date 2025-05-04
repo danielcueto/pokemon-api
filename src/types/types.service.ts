@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -13,6 +17,16 @@ export class TypesService {
   ) {}
 
   async create(createTypeDto: CreateTypeDto): Promise<Type> {
+    createTypeDto.name = createTypeDto.name.toLowerCase().trim();
+    const existingType = await this.typesRepository.findOneBy({
+      name: createTypeDto.name,
+    });
+    if (existingType) {
+      throw new BadRequestException(
+        `El tipo con el nombre ${createTypeDto.name} ya existe`,
+      );
+    }
+
     const newType = this.typesRepository.create(createTypeDto);
     return this.typesRepository.save(newType);
   }
