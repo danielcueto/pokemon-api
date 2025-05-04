@@ -1,95 +1,109 @@
 # Pokémon API
 
-This repository contains the backend API for managing Pokémon data, built using the NestJS framework.
+API REST desarrollada con [NestJS](https://nestjs.com/) para gestionar información sobre Pokémon, Entrenadores y Tipos. Utiliza TypeORM como ORM y PostgreSQL como base de datos.
 
-[![Nest Logo](https://nestjs.com/img/logo-small.svg)](http://nestjs.com/)
+## Descripción
 
-A progressive [Node.js](http://nodejs.org) framework for building efficient and scalable server-side applications.
+Esta API proporciona endpoints para realizar operaciones CRUD (Crear, Leer, Actualizar, Eliminar) sobre las siguientes entidades:
 
-[![NPM Version](https://img.shields.io/npm/v/@nestjs/core.svg)](https://www.npmjs.com/~nestjscore)
-[![Package License](https://img.shields.io/npm/l/@nestjs/core.svg)](https://www.npmjs.com/~nestjscore)
-[![NPM Downloads](https://img.shields.io/npm/dm/@nestjs/common.svg)](https://www.npmjs.com/~nestjscore)
-[![CircleCI](https://img.shields.io/circleci/build/github/nestjs/nest/master)](https://circleci.com/gh/nestjs/nest/tree/master)
-[![Coverage](https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9)](https://coveralls.io/github/nestjs/nest?branch=master)
-[![Discord](https://img.shields.io/badge/discord-online-brightgreen.svg)](https://discord.gg/G7Qnnhy)
-[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-[![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)
-[![Donate](https://img.shields.io/badge/Donate-PayPal-ff3f59.svg)](https://paypal.me/kamilmysliwiec)
-[![Support us](https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg)](https://opencollective.com/nest#sponsor)
-[![Follow on Twitter](https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow)](https://twitter.com/nestframework)
+*   **Pokémons:** Gestionar datos individuales de Pokémon.
+*   **Trainers:** Gestionar datos de entrenadores Pokémon.
+*   **Types:** Gestionar los diferentes tipos de Pokémon (Fuego, Agua, Planta, etc.).
 
-## Description
+## Prerrequisitos
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository used for the Pokémon API.
+Antes de empezar, asegúrate de tener instalado lo siguiente:
 
-## Project setup
+*   [Node.js](https://nodejs.org/) (Se recomienda la versión LTS)
+*   npm (Normalmente viene con Node.js) o yarn
+*   [PostgreSQL](https://www.postgresql.org/)
 
-```bash
-$ npm install
-```
+## Instalación
 
-## Compile and run the project
+1.  **Clona el repositorio:**
+    ```bash
+    git clone <URL_DEL_REPOSITORIO>
+    cd pokemon-api
+    ```
 
-```bash
-# development
-$ npm run start
+2.  **Instala las dependencias:**
+    ```bash
+    npm install
+    # o si usas yarn:
+    # yarn install
+    ```
 
-# watch mode
-$ npm run start:dev
+3.  **Configura la base de datos:**
+    *   Asegúrate de tener una instancia de PostgreSQL en ejecución.
+    *   Crea una base de datos para la aplicación (p. ej., `pokemon_db`).
+    *   Ejecuta el script SQL proporcionado en `database.sql` para crear las tablas necesarias en la base de datos que acabas de crear.
+    *   **Importante:** Revisa la configuración de conexión a la base de datos. Es probable que necesites crear un archivo `.env` en la raíz del proyecto para especificar las credenciales de la base de datos (host, puerto, usuario, contraseña, nombre de la base de datos), basándote en cómo esté configurado `DatabaseModule` en `src/database/database.module.ts`. Un ejemplo de archivo `.env` podría ser:
+      ```env
+      DB_HOST=localhost
+      DB_PORT=5432
+      DB_USERNAME=tu_usuario_postgres
+      DB_PASSWORD=tu_contraseña_postgres
+      DB_DATABASE=pokemon_db
+      ```
+      *Nota: Asegúrate de que el `DatabaseModule` esté configurado para leer estas variables de entorno.*
 
-# production mode
-$ npm run start:prod
-```
+## Ejecutar la Aplicación
 
-## Run tests
+1.  **Modo de Desarrollo (con recarga automática):**
+    ```bash
+    npm run start:dev
+    ```
+    La aplicación estará disponible en `http://localhost:3000` (o el puerto configurado).
 
-```bash
-# unit tests
-$ npm run test
+2.  **Compilar para Producción:**
+    ```bash
+    npm run build
+    ```
 
-# e2e tests
-$ npm run test:e2e
+3.  **Ejecutar en Modo Producción:**
+    ```bash
+    npm run start:prod
+    ```
 
-# test coverage
-$ npm run test:cov
-```
+## Ejecutar Pruebas
 
-## Deployment
+1.  **Pruebas Unitarias:**
+    ```bash
+    npm run test
+    ```
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+2.  **Pruebas End-to-End (E2E):**
+    *   Asegúrate de que la aplicación (o una instancia de prueba) esté en ejecución y la base de datos de prueba configurada.
+    ```bash
+    npm run test:e2e
+    ```
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+3.  **Cobertura de Pruebas:**
+    ```bash
+    npm run test:cov
+    ```
+    Se generará un informe de cobertura en la carpeta `coverage`.
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+## Documentación de la API (Swagger)
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+Si la configuración de Swagger está habilitada (como sugiere la dependencia `@nestjs/swagger`), puedes acceder a la documentación interactiva de la API (generalmente) en la siguiente ruta una vez que la aplicación esté en ejecución:
 
-## Resources
+`http://localhost:3000/api`
 
-Check out a few resources that may come in handy when working with NestJS:
+Esta interfaz te permitirá ver todos los endpoints disponibles, sus parámetros, y probarlos directamente desde el navegador.
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+## Estructura del Proyecto (Resumen)
 
-## Support
+*   `src/`: Contiene el código fuente principal de la aplicación.
+    *   `main.ts`: Punto de entrada de la aplicación.
+    *   `app.module.ts`: Módulo raíz de la aplicación.
+    *   `database/`: Configuración del módulo de base de datos.
+    *   `pokemons/`: Módulo para la gestión de Pokémon (controlador, servicio, DTOs, entidad).
+    *   `trainers/`: Módulo para la gestión de Entrenadores.
+    *   `types/`: Módulo para la gestión de Tipos de Pokémon.
+*   `test/`: Contiene las pruebas E2E.
+*   `database.sql`: Script para inicializar la estructura de la base de datos.
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## Licencia
 
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Este proyecto está bajo la licencia UNLICENSED (según `package.json`).
