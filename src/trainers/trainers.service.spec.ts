@@ -10,7 +10,9 @@ import { UpdateTrainerDto } from './dto/update-trainer.dto';
 type MockRepository<T extends ObjectLiteral = any> = {
   [K in keyof Repository<T>]: jest.Mock;
 };
-const createMockRepository = <T extends ObjectLiteral = any>(): MockRepository<T> => ({
+const createMockRepository = <
+  T extends ObjectLiteral = any,
+>(): MockRepository<T> => ({
   create: jest.fn(),
   save: jest.fn(),
   find: jest.fn(),
