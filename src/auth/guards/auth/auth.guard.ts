@@ -17,20 +17,14 @@ export class AuthGuard implements CanActivate {
       'authorization'
     ] as string;
 
-    if (!authHeader || !authHeader.startsWith('Basic ')) {
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
       throw new UnauthorizedException('No estás autorizado perrito');
     }
-
-    const base64Credentials: string = authHeader.split(' ')[1];
-    const credentials: string = Buffer.from(
-      base64Credentials,
-      'base64',
-    ).toString('ascii');
-
-    const [username, password]: [string, string] = credentials.split(':') as [
-      string,
-      string,
-    ];
-    return this.authService.validateBasicAuth(username, password);
+    const token = authHeader.split(' ')[1];
+    const isValid = await this.authService.validateToken(token);
+    if (!isValid) {
+      throw new UnauthorizedException('Token inválido o no existe');
+    }
+    return true;
   }
 }

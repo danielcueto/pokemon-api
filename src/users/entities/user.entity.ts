@@ -8,4 +8,7 @@ export class User {
   @Column({ type: 'varchar', nullable: false })
   @Exclude()
   password: string;
+  @Column({ type: 'varchar', nullable: true })
+  @Exclude()
+  token?: string | null;
 }

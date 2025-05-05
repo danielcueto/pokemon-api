@@ -52,6 +52,16 @@ export class UsersService {
     return user;
   }
 
+  async findToken(token: string): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: { token },
+    });
+    if (!user) {
+      throw new NotFoundException(`Token inválido o no existe`);
+    }
+    return user;
+  }
+
   async update(username: string, updateUserDto: UpdateUserDto) {
     const user = await this.userRepository.findOne({
       where: { username },
