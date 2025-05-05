@@ -1,13 +1,16 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   Body,
   Controller,
+  Get,
   Post,
-  Req,
-  UnauthorizedException,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
-import { Request } from 'express';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('auth')
 export class AuthController {
@@ -15,23 +18,18 @@ export class AuthController {
 
   @Post('login')
   async login(@Body() createUserDto: CreateUserDto) {
-    const token = await this.authService.login(createUserDto);
-    return { token };
+    return await this.authService.login(createUserDto);
   }
 
   @Post('register')
   async register(@Body() createUserDto: CreateUserDto) {
-    const token = await this.authService.register(createUserDto);
-    return { token };
+    return await this.authService.register(createUserDto);
   }
 
-  @Post('logout')
-  logout(@Req() req: Request): Promise<string> {
-    const token: string | undefined =
-      req.headers['authorization']?.split(' ')[1];
-    if (!token) {
-      throw new UnauthorizedException('Logueate primero perrito');
-    }
-    return this.authService.logout(token);
+  @Get('profile')
+  @UseGuards(AuthGuard('jwt'))
+  getProfile(@Request() req) {
+    const { username } = req.user;
+    return { username };
   }
 }

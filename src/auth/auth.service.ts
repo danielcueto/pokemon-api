@@ -3,48 +3,51 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { randomBytes } from 'crypto';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
+import { JwtPayload } from './interfaces/jwt-payload.interface';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly userSerice: UsersService) {}
+  constructor(
+    private readonly userService: UsersService,
+    private readonly jwtService: JwtService,
+  ) {}
 
-  async login(createUserDto: CreateUserDto): Promise<string> {
-    const { username, password } = createUserDto;
-    const user = await this.userSerice.findOne(username);
-    if (!user || !bcrypt.compareSync(password, user.password)) {
-      throw new UnauthorizedException('Usuario o credenciales inválidas');
-    }
-
-    //GENERACION DEL FAKIN TOKEN
-    const token = randomBytes(16).toString('hex');
-    user.token = token;
-    await this.userSerice.update(username, user);
-    return token;
+  async login(createUserDto: CreateUserDto) {
+    const user = await this.validateUser(createUserDto);
+    return this.generateToken(user);
   }
 
-  async logout(token: string): Promise<string> {
-    const user = await this.userSerice.findToken(token);
-    if (!user) throw new UnauthorizedException('Token inválido o no existe');
-    user.token = null;
-    await this.userSerice.update(user.username, user);
-    return 'Logout exitoso';
-  }
-
-  async register(createUserDto: CreateUserDto): Promise<string> {
-    const user = await this.userSerice.create(createUserDto);
+  async register(createUserDto: CreateUserDto) {
+    const user = await this.userService.create(createUserDto);
     if (!user) {
       throw new BadRequestException('Error al crear el usuario');
     }
-    return this.login(createUserDto);
+    return this.generateToken(user);
   }
 
-  async validateToken(token: string): Promise<boolean> {
-    const user = await this.userSerice.findToken(token);
-    if (!user) throw new UnauthorizedException('Token inválido o no existe');
-    return true;
+  private generateToken(user: User) {
+    const payload: JwtPayload = { username: user.username, sub: user.username };
+    const token = this.jwtService.sign(payload);
+
+    return {
+      access_token: token,
+      user: {
+        username: user.username,
+      },
+    };
+  }
+
+  async validateUser(createUserDto: CreateUserDto): Promise<User> {
+    const { username, password } = createUserDto;
+    const user = await this.userService.findOne(username);
+    if (!user || !bcrypt.compareSync(password, user.password)) {
+      throw new UnauthorizedException('Usuario o credenciales inválidas');
+    }
+    return user;
   }
 }

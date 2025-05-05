@@ -12,9 +12,9 @@ import { TrainersService } from './trainers.service';
 import { CreateTrainerDto } from './dto/create-trainer.dto';
 import { UpdateTrainerDto } from './dto/update-trainer.dto';
 import { Pokemon } from '../pokemons/entities/pokemon.entity';
-import { AuthGuard } from 'src/auth/guards/auth/auth.guard';
+import { AuthGuard } from '@nestjs/passport';
 
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard('jwt'))
 @Controller('trainers')
 export class TrainersController {
   constructor(private readonly trainersService: TrainersService) {}

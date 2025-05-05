@@ -11,9 +11,9 @@ import {
 import { TypesService } from './types.service';
 import { CreateTypeDto } from './dto/create-type.dto';
 import { UpdateTypeDto } from './dto/update-type.dto';
-import { AuthGuard } from 'src/auth/guards/auth/auth.guard';
+import { AuthGuard } from '@nestjs/passport';
 
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard('jwt'))
 @Controller('types')
 export class TypesController {
   constructor(private readonly typesService: TypesService) {}

@@ -14,9 +14,9 @@ import { PokemonsService } from './pokemons.service';
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
 import { CapturePokemonDto } from './dto/capture-pokemon.dto';
-import { AuthGuard } from 'src/auth/guards/auth/auth.guard';
+import { AuthGuard } from '@nestjs/passport';
 
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard('jwt'))
 @Controller('pokemons')
 export class PokemonsController {
   constructor(private readonly pokemonsService: PokemonsService) {}
