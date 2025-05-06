@@ -17,6 +17,10 @@ export class TypesService {
   ) {}
 
   async create(createTypeDto: CreateTypeDto): Promise<Type> {
+    if (!createTypeDto.name) {
+      throw new BadRequestException('El nombre del tipo es obligatorio');
+    }
+
     createTypeDto.name = createTypeDto.name.toLowerCase().trim();
     const existingType = await this.typesRepository.findOneBy({
       name: createTypeDto.name,
@@ -36,6 +40,9 @@ export class TypesService {
   }
 
   async findOne(id: string): Promise<Type> {
+    if (!id) {
+      throw new BadRequestException('El id es obligatorio');
+    }
     const type = await this.typesRepository.findOneBy({ id });
     if (!type) {
       throw new NotFoundException(`El tipo con el id ${id}, no existe`);
@@ -45,11 +52,33 @@ export class TypesService {
 
   async update(id: string, updateTypeDto: UpdateTypeDto): Promise<Type> {
     const type = await this.findOne(id);
+    if (!type) {
+      throw new NotFoundException(`El tipo con el id ${id}, no existe`);
+    }
+    if (!updateTypeDto.name || !id) {
+      throw new BadRequestException('Error, envia el nombre y el id del tipo');
+    }
     this.typesRepository.merge(type, updateTypeDto);
     return this.typesRepository.save(type);
   }
 
-  remove(id: string): Promise<void> {
-    return this.typesRepository.delete(id).then(() => {});
+  async remove(id: string): Promise<void> {
+    // Check if any Pokémon are associated with this type
+    const typesWithRelations = await this.typesRepository.findOne({
+      where: { id },
+      relations: ['pokemons'],
+    });
+
+    if (
+      typesWithRelations &&
+      typesWithRelations.pokemons &&
+      typesWithRelations.pokemons.length > 0
+    ) {
+      throw new BadRequestException(
+        `No se puede eliminar el tipo porque está asociado a ${typesWithRelations.pokemons.length} Pokémon`,
+      );
+    }
+
+    await this.typesRepository.delete(id);
   }
 }

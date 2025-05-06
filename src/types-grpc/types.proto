@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package types;
+
+service TypeService {
+  rpc Create (CreateTypeDto) returns (Type);
+  rpc FindAll (Empty) returns (TypeList);
+  rpc FindOne (Id) returns (Type);
+  rpc Update (UpdateTypeDto) returns (Type);
+  rpc Remove (Id) returns (Empty);
+}
+
+message Empty {}
+
+message Id {
+  string id = 1;
+}
+
+message CreateTypeDto {
+  string name = 1;
+}
+
+message UpdateTypeDto {
+  string id = 1;
+  string name = 2;
+}
+
+message Type {
+  string id = 1;
+  string name = 2;
+}
+
+message TypeList {
+  repeated Type types = 1;
+}
