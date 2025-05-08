@@ -42,7 +42,6 @@ export class TrainersService {
     return this.trainersRepository.save(trainer);
   }
 
-  // trainers.service.ts
   async getPokemonsByTrainerId(id: string): Promise<Pokemon[]> {
     const trainer = await this.trainersRepository.findOne({
       where: { id },
