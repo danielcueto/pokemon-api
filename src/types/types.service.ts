@@ -9,11 +9,13 @@ import { Repository } from 'typeorm';
 import { CreateTypeDto } from './dto/create-type.dto';
 import { UpdateTypeDto } from './dto/update-type.dto';
 import { Type } from './entities/type.entity';
+import { Pokemon } from '../pokemons/entities/pokemon.entity';
 
 @Injectable()
 export class TypesService {
   constructor(
     @InjectRepository(Type) private typesRepository: Repository<Type>,
+    @InjectRepository(Pokemon) private pokemonsRepository: Repository<Pokemon>,
   ) {}
 
   async create(createTypeDto: CreateTypeDto): Promise<Type> {
@@ -51,5 +53,12 @@ export class TypesService {
 
   remove(id: string): Promise<void> {
     return this.typesRepository.delete(id).then(() => {});
+  }
+
+  async getPokemonsByTypeId(typeId: string): Promise<Pokemon[]> {
+    return this.pokemonsRepository.find({
+      where: { typeId },
+      relations: ['trainer', 'type'],
+    });
   }
 }

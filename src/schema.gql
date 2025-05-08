@@ -1,0 +1,102 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Type {
+  id: ID!
+  name: String!
+  pokemons: [Pokemon!]
+}
+
+type Trainer {
+  id: ID!
+  name: String!
+  secondName: String!
+  age: Int!
+  region: String!
+  badges: Int!
+  pokemons: [Pokemon!]
+}
+
+type Pokemon {
+  id: ID!
+  name: String!
+  level: Int!
+  type: Type!
+  trainer: Trainer
+  attack: Int!
+  defense: Int!
+  speed: Int!
+  isLegendary: Boolean!
+}
+
+type Query {
+  pokemons: [Pokemon!]!
+  pokemon(id: ID!): Pokemon!
+  types: [Type!]!
+  type(id: ID!): Type!
+  trainers: [Trainer!]!
+  trainer(id: ID!): Trainer!
+}
+
+type Mutation {
+  createPokemon(createPokemonInput: CreatePokemonInput!): Pokemon!
+  updatePokemon(id: ID!, updatePokemonInput: UpdatePokemonInput!): Pokemon!
+  deletePokemon(id: ID!): Boolean!
+  capturePokemon(id: ID!, capturePokemonInput: CapturePokemonInput!): Pokemon!
+  levelUpPokemon(id: ID!): Pokemon!
+  releasePokemon(id: ID!): Pokemon!
+  createType(createTypeInput: CreateTypeInput!): Type!
+  updateType(id: ID!, updateTypeInput: UpdateTypeInput!): Type!
+  removeType(id: ID!): Boolean!
+  createTrainer(createTrainerInput: CreateTrainerInput!): Trainer!
+  updateTrainer(id: ID!, updateTrainerInput: UpdateTrainerInput!): Trainer!
+  deleteTrainer(id: ID!): Boolean!
+}
+
+input CreatePokemonInput {
+  name: String!
+  level: Int!
+  typeId: String!
+  attack: Int!
+  defense: Int!
+  speed: Int!
+  isLegendary: Boolean!
+}
+
+input UpdatePokemonInput {
+  name: String
+  level: Int
+  attack: Int
+  defense: Int
+  speed: Int
+  isLegendary: Boolean
+}
+
+input CapturePokemonInput {
+  trainerId: String!
+}
+
+input CreateTypeInput {
+  name: String!
+}
+
+input UpdateTypeInput {
+  name: String!
+}
+
+input CreateTrainerInput {
+  name: String!
+  secondName: String!
+  age: Int!
+  region: String!
+  badges: Int!
+}
+
+input UpdateTrainerInput {
+  name: String
+  secondName: String
+  age: Int
+  region: String
+  badges: Int
+}
