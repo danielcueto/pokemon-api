@@ -40,7 +40,7 @@ export class TypesResolver {
   }
 
   @Mutation(() => Boolean)
-  async removeType(@Args('id', { type: () => ID }) id: string) {
+  async deleteType(@Args('id', { type: () => ID }) id: string) {
     await this.typesService.remove(id);
     return true;
   }

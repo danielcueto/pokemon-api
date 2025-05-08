@@ -7,6 +7,7 @@ import {
   Min,
   Max,
   IsBoolean,
+  IsOptional,
 } from 'class-validator';
 
 @InputType()
@@ -54,34 +55,40 @@ export class UpdatePokemonInput {
   @Field(() => String, { nullable: true })
   @IsString()
   @IsNotEmpty()
+  @IsOptional()
   name?: string;
 
   @Field(() => Int, { nullable: true })
   @IsInt()
   @Min(1)
   @Max(100)
+  @IsOptional()
   level?: number;
 
   @Field(() => Int, { nullable: true })
   @IsInt()
   @Min(1)
   @Max(100)
+  @IsOptional()
   attack?: number;
 
   @Field(() => Int, { nullable: true })
   @IsInt()
   @Min(1)
   @Max(100)
+  @IsOptional()
   defense?: number;
 
   @Field(() => Int, { nullable: true })
   @IsInt()
   @Min(1)
   @Max(100)
+  @IsOptional()
   speed?: number;
 
   @Field(() => Boolean, { nullable: true })
   @IsBoolean()
+  @IsOptional()
   isLegendary?: boolean;
 }
 

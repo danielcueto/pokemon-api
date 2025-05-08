@@ -48,7 +48,7 @@ type Mutation {
   releasePokemon(id: ID!): Pokemon!
   createType(createTypeInput: CreateTypeInput!): Type!
   updateType(id: ID!, updateTypeInput: UpdateTypeInput!): Type!
-  removeType(id: ID!): Boolean!
+  deleteType(id: ID!): Boolean!
   createTrainer(createTrainerInput: CreateTrainerInput!): Trainer!
   updateTrainer(id: ID!, updateTrainerInput: UpdateTrainerInput!): Trainer!
   deleteTrainer(id: ID!): Boolean!

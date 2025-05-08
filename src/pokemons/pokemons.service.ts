@@ -22,14 +22,14 @@ export class PokemonsService {
 
   getAll(): Promise<Pokemon[]> {
     return this.pokemonsRepository.find({
-      relations: ['trainer'],
+      relations: ['trainer', 'type'],
     });
   }
 
   async getById(id: string): Promise<Pokemon> {
     const pokemon = await this.pokemonsRepository.findOne({
       where: { id },
-      relations: ['trainer'],
+      relations: ['trainer', 'type'],
     });
 
     if (!pokemon) {
