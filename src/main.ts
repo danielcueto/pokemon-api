@@ -3,6 +3,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { join } from 'path';
+import { ReflectionService } from '@grpc/reflection';
 
 import { AppModule } from './app.module';
 
@@ -33,6 +34,9 @@ async function bootstrap() {
       package: 'types',
       protoPath: join(__dirname, './types-grpc/types.proto'),
       url: '0.0.0.0:3001',
+      onLoadPackageDefinition: (pkg, server) => {
+        new ReflectionService(pkg).addToServer(server);
+      },
     },
   });
 
