@@ -13,12 +13,11 @@ import { Global, Module } from '@nestjs/common';
     TypeOrmModule.forRootAsync({
       useFactory: () => ({
         type: 'postgres',
-        host: 'localhost',
-        port: 5432,
-        username: 'postgres',
-        // password: 'password',
-        password: '123777',
-        database: 'pokemondb',
+        host: process.env.DB_HOST || 'localhost',
+        port: parseInt(process.env.DB_PORT ?? '5432', 10),
+        username: process.env.DB_USERNAME || 'postgres',
+        password: process.env.DB_PASSWORD || '123777',
+        database: process.env.DB_DATABASE || 'pokemondb',
         entities: [__dirname + '/../**/*.entity{.ts,.js}'],
         synchronize: true,
         autoLoadEntities: true,

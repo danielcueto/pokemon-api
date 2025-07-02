@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  # Base de datos PostgreSQL
+  postgres:
+    image: postgres:15-alpine
+    container_name: pokemon-db
+    environment:
+      POSTGRES_DB: pokemondb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123777
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped
+
+  # API NestJS
+  api:
+    build: .
+    container_name: pokemon-api
+    environment:
+      PORT: 3000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: 123777
+      DB_DATABASE: pokemondb
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
