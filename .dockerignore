@@ -1,0 +1,27 @@
+# Ignorar node_modules
+node_modules
+
+# Ignorar archivos de desarrollo
+npm-debug.log*
+.npm
+
+# Ignorar archivos de git
+.git
+.gitignore
+
+# Ignorar archivos de documentación
+README.md
+*.md
+
+# Ignorar archivos de configuración de IDE
+.vscode
+.idea
+
+# Ignorar archivos de testing
+coverage
+*.spec.ts
+test/
+
+# Ignorar archivos temporales
+*.tmp
+*.log

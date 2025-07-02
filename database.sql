@@ -1,61 +1,37 @@
-create table types (
-    id serial primary key,
-    name varchar(50) unique not null
-);
+INSERT INTO types (id, name) VALUES 
+('550e8400-e29b-41d4-a716-446655440001', 'Normal'),
+('550e8400-e29b-41d4-a716-446655440002', 'Fuego'),
+('550e8400-e29b-41d4-a716-446655440003', 'Agua'),
+('550e8400-e29b-41d4-a716-446655440004', 'Planta'),
+('550e8400-e29b-41d4-a716-446655440005', 'Eléctrico'),
+('550e8400-e29b-41d4-a716-446655440006', 'Hielo'),
+('550e8400-e29b-41d4-a716-446655440007', 'Lucha'),
+('550e8400-e29b-41d4-a716-446655440008', 'Veneno'),
+('550e8400-e29b-41d4-a716-446655440009', 'Tierra'),
+('550e8400-e29b-41d4-a716-446655440010', 'Volador'),
+('550e8400-e29b-41d4-a716-446655440011', 'Psíquico'),
+('550e8400-e29b-41d4-a716-446655440012', 'Bicho'),
+('550e8400-e29b-41d4-a716-446655440013', 'Roca'),
+('550e8400-e29b-41d4-a716-446655440014', 'Fantasma'),
+('550e8400-e29b-41d4-a716-446655440015', 'Dragón'),
+('550e8400-e29b-41d4-a716-446655440016', 'Siniestro'),
+('550e8400-e29b-41d4-a716-446655440017', 'Acero'),
+('550e8400-e29b-41d4-a716-446655440018', 'Hada')
+ON CONFLICT (name) DO NOTHING;
 
-create table trainers (
-    id serial primary key,
-    name varchar(100) not null,
-    second_name varchar(100) not null,
-    age int not null check (age between 10 and 120),
-    region varchar(100),
-    badges int default 0 check (badges >= 0)
-);
+INSERT INTO trainers (id, name, "secondName", age, region, badges) VALUES
+('660e8400-e29b-41d4-a716-446655440001', 'Ash', 'Ketchum', 10, 'Kanto', 8),
+('660e8400-e29b-41d4-a716-446655440002', 'Misty', 'Waterflower', 12, 'Kanto', 1),
+('660e8400-e29b-41d4-a716-446655440003', 'Brock', 'Harrison', 15, 'Kanto', 1),
+('660e8400-e29b-41d4-a716-446655440004', 'Gary', 'Oak', 10, 'Kanto', 10)
+ON CONFLICT (id) DO NOTHING;
 
-create table pokemons (
-    id serial primary key,
-    name varchar(100) not null,
-    level int not null check (level between 1 and 100),
-    type_id integer not null references type(id) on delete restrict,
-    trainer_id integer references trainer(id) on delete set null,
-    attack int not null check (attack >= 0),
-    defense int not null check (defense >= 0),
-    speed int not null check (speed >= 0),
-    is_legendary boolean not null default false
-);
-
-insert into types (name) values
-('Normal'),
-('Fuego'),
-('Agua'),
-('Planta'),
-('Eléctrico'),
-('Hielo'),
-('Lucha'),
-('Veneno'),
-('Tierra'),
-('Volador'),
-('Psíquico'),
-('Bicho'),
-('Roca'),
-('Fantasma'),
-('Dragón'),
-('Siniestro'),
-('Acero'),
-('Hada');
-
-insert into trainers (name, second_name, age, region, badges) values
-('Ash', 'Ketchum', 10, 'Kanto', 8),
-('Misty', 'Waterflower', 12, 'Kanto', 1),
-('Brock', 'Harrison', 15, 'Kanto', 1),
-('Gary', 'Oak', 10, 'Kanto', 10);
-
-
-insert into pokemons (name, level, type_id, trainer_id, attack, defense, speed, is_legendary) values
-('Pikachu', 25, 5, 1, 55, 40, 90, false),
-('Charizard', 36, 2, 1, 84, 78, 100, false),
-('Bulbasaur', 15, 4, 1, 49, 49, 45, false), 
-('Staryu', 18, 3, 2, 45, 55, 85, false),
-('Onix', 14, 13, 3, 45, 160, 70, false),
-('Blastoise', 36, 3, 4, 83, 100, 78, false),
-('Mewtwo', 70, 11, null, 110, 90, 130, true);
+INSERT INTO pokemons (id, name, level, "typeId", "trainerId", attack, defense, speed, "isLegendary") VALUES
+('770e8400-e29b-41d4-a716-446655440001', 'Pikachu', 25, '550e8400-e29b-41d4-a716-446655440005', '660e8400-e29b-41d4-a716-446655440001', 55, 40, 90, false),
+('770e8400-e29b-41d4-a716-446655440002', 'Charizard', 36, '550e8400-e29b-41d4-a716-446655440002', '660e8400-e29b-41d4-a716-446655440001', 84, 78, 100, false),
+('770e8400-e29b-41d4-a716-446655440003', 'Bulbasaur', 15, '550e8400-e29b-41d4-a716-446655440004', '660e8400-e29b-41d4-a716-446655440001', 49, 49, 45, false),
+('770e8400-e29b-41d4-a716-446655440004', 'Staryu', 18, '550e8400-e29b-41d4-a716-446655440003', '660e8400-e29b-41d4-a716-446655440002', 45, 55, 85, false),
+('770e8400-e29b-41d4-a716-446655440005', 'Onix', 14, '550e8400-e29b-41d4-a716-446655440013', '660e8400-e29b-41d4-a716-446655440003', 45, 160, 70, false),
+('770e8400-e29b-41d4-a716-446655440006', 'Blastoise', 36, '550e8400-e29b-41d4-a716-446655440003', '660e8400-e29b-41d4-a716-446655440004', 83, 100, 78, false),
+('770e8400-e29b-41d4-a716-446655440007', 'Mewtwo', 70, '550e8400-e29b-41d4-a716-446655440011', null, 110, 90, 130, true)
+ON CONFLICT (id) DO NOTHING;
