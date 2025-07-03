@@ -1,44 +1,44 @@
-# GitHub Actions CI/CD Pipeline
+# GitHub Actions Workflows
 
-## Descripción del Flujo
+## Workflows Configurados
 
-Este pipeline de GitHub Actions está diseñado para automatizar el proceso de integración continua y despliegue continuo (CI/CD) de la Pokemon API.
+### 1. Simple CI Pipeline (`simple-ci.yml`)
+Pipeline básico que ejecuta en cada push/PR a main y develop:
+- **Linting**: Verifica calidad del código
+- **Tests**: Ejecuta pruebas unitarias
+- **Build**: Construye la aplicación
+- **Artifacts**: Sube el build compilado
 
-## Características del Pipeline
+### 2. Docker Build and Push (`docker-build.yml`)
+Pipeline que construye y sube la imagen Docker a Docker Hub:
+- **Build**: Construye la imagen Docker
+- **Push**: Sube automáticamente a Docker Hub (solo en push a main)
+- **Tags**: Crea tags con `latest` y el SHA del commit
 
-### ✅ Ejecuta pasos de prueba
-- **Linting**: Verifica la calidad y consistencia del código
-- **Unit Tests**: Ejecuta todas las pruebas unitarias
-- **Coverage Tests**: Genera reportes de cobertura de código
-- **E2E Tests**: Ejecuta pruebas end-to-end con base de datos PostgreSQL
+## Configuración Requerida
 
-### ✅ Push solo en main/develop
-- El pipeline se activa automáticamente en:
-  - Push a las ramas `main` y `develop`
-  - Pull requests hacia estas ramas
-- Los despliegues solo ocurren en pushes directos (no en PRs)
+Para que funcione el workflow de Docker, necesitas configurar estos secrets en GitHub:
 
-### ✅ Sube artefactos de construcción
-- Genera y almacena los archivos compilados
-- Incluye `dist/`, `package.json` y `package-lock.json`
-- Los artefactos se mantienen por 30 días
-- Nombrados con el SHA del commit para trazabilidad
+1. Ve a **Settings** → **Secrets and variables** → **Actions**
+2. Agrega estos secrets:
+   - `DOCKERHUB_USERNAME`: Tu nombre de usuario de Docker Hub
+   - `DOCKERHUB_TOKEN`: Token de acceso de Docker Hub
+
+## Cómo crear el Docker Hub Token
+
+1. Ve a [Docker Hub](https://hub.docker.com/)
+2. **Settings** → **Security** → **New Access Token**
+3. Copia el token y úsalo como `DOCKERHUB_TOKEN`
+
+## Flujo de Trabajo
+
+1. **Push a develop**: Solo ejecuta CI (tests y build)
+2. **Push a main**: Ejecuta CI + construye y sube imagen Docker
+3. **Pull Requests**: Solo ejecuta CI, no sube a Docker Hub
 
 ## Herramientas Utilizadas
 
-### Pipeline Tools
 - **GitHub Actions**: Plataforma de CI/CD
-- **Node.js**: Runtime y matriz de versiones (18.x, 20.x)
-- **PostgreSQL**: Base de datos para pruebas
-- **NPM**: Gestión de dependencias
-
-### Services
-- **PostgreSQL 15**: Servicio de base de datos para pruebas E2E
-
-## Matriz de Pruebas
-
-El pipeline ejecuta pruebas en múltiples versiones de Node.js:
-- Node.js 18.x (LTS)
-- Node.js 20.x (Current)
-
-Esto asegura compatibilidad y detecta problemas potenciales en diferentes versiones.
+- **Node.js 20**: Runtime para la aplicación
+- **Docker**: Para construir y subir imágenes
+- **Docker Hub**: Registro de imágenes
