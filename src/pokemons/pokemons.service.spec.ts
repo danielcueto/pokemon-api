@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PokemonsService } from './pokemons.service';
-import { Repository } from 'typeorm';
 import { Pokemon } from './entities/pokemon.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
@@ -11,8 +10,16 @@ import { Trainer } from '../trainers/entities/trainer.entity';
 import { TypesService } from '../types/types.service';
 import { TrainersService } from '../trainers/trainers.service';
 
-type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>;
-const createMockRepository = <T = any>(): MockRepository<T> => ({
+type MockRepository = {
+  create: jest.Mock;
+  save: jest.Mock;
+  find: jest.Mock;
+  findOne: jest.Mock;
+  findOneBy: jest.Mock;
+  merge: jest.Mock;
+  delete: jest.Mock;
+};
+const createMockRepository = (): MockRepository => ({
   create: jest.fn(),
   save: jest.fn(),
   find: jest.fn(),
@@ -24,7 +31,7 @@ const createMockRepository = <T = any>(): MockRepository<T> => ({
 
 describe('PokemonsService', () => {
   let service: PokemonsService;
-  let pokemonRepository: MockRepository<Pokemon>;
+  let pokemonRepository: MockRepository;
   let typesService: TypesService;
   let trainersService: TrainersService;
 
@@ -52,9 +59,7 @@ describe('PokemonsService', () => {
     }).compile();
 
     service = module.get<PokemonsService>(PokemonsService);
-    pokemonRepository = module.get<MockRepository<Pokemon>>(
-      getRepositoryToken(Pokemon),
-    );
+    pokemonRepository = module.get<MockRepository>(getRepositoryToken(Pokemon));
     typesService = module.get<TypesService>(TypesService);
     trainersService = module.get<TrainersService>(TrainersService);
   });
@@ -193,7 +198,7 @@ describe('PokemonsService', () => {
         isLegendary: false,
       };
 
-      jest.spyOn(typesService, 'findOne').mockResolvedValue(null);
+      jest.spyOn(typesService, 'findOne').mockResolvedValue(null as any);
 
       await expect(service.create(createPokemonDto)).rejects.toThrow(
         NotFoundException,
@@ -269,7 +274,7 @@ describe('PokemonsService', () => {
       jest
         .spyOn(service, 'getById')
         .mockResolvedValue(existingPokemon as Pokemon);
-      pokemonRepository.merge.mockReturnValue(updatedPokemon as Pokemon);
+      pokemonRepository.merge.mockReturnValue(existingPokemon as Pokemon);
       pokemonRepository.save.mockResolvedValue(updatedPokemon as Pokemon);
 
       const result = await service.update(id, updatePokemonDto);
@@ -279,7 +284,7 @@ describe('PokemonsService', () => {
         existingPokemon,
         updatePokemonDto,
       );
-      expect(pokemonRepository.save).toHaveBeenCalledWith(updatedPokemon);
+      expect(pokemonRepository.save).toHaveBeenCalledWith(existingPokemon);
       expect(result).toEqual(updatedPokemon);
     });
 

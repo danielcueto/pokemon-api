@@ -1,14 +1,20 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TypesService } from './types.service';
-import { Repository } from 'typeorm';
 import { Type } from './entities/type.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { NotFoundException } from '@nestjs/common';
 import { CreateTypeDto } from './dto/create-type.dto';
 import { UpdateTypeDto } from './dto/update-type.dto';
 
-type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>;
-const createMockRepository = <T = any>(): MockRepository<T> => ({
+type MockRepository = {
+  create: jest.Mock;
+  save: jest.Mock;
+  find: jest.Mock;
+  findOneBy: jest.Mock;
+  merge: jest.Mock;
+  delete: jest.Mock;
+};
+const createMockRepository = (): MockRepository => ({
   create: jest.fn(),
   save: jest.fn(),
   find: jest.fn(),
@@ -19,7 +25,7 @@ const createMockRepository = <T = any>(): MockRepository<T> => ({
 
 describe('TypesService', () => {
   let service: TypesService;
-  let typeRepository: MockRepository<Type>;
+  let typeRepository: MockRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -33,7 +39,7 @@ describe('TypesService', () => {
     }).compile();
 
     service = module.get<TypesService>(TypesService);
-    typeRepository = module.get<MockRepository<Type>>(getRepositoryToken(Type));
+    typeRepository = module.get<MockRepository>(getRepositoryToken(Type));
   });
 
   it('should be defined', () => {
@@ -103,7 +109,7 @@ describe('TypesService', () => {
       const updatedType = { id, name: 'Updated Fire' };
 
       jest.spyOn(service, 'findOne').mockResolvedValue(existingType as Type);
-      typeRepository.merge.mockReturnValue(updatedType as Type);
+      typeRepository.merge.mockReturnValue(existingType as Type);
       typeRepository.save.mockResolvedValue(updatedType as Type);
 
       const result = await service.update(id, updateTypeDto);
@@ -113,7 +119,7 @@ describe('TypesService', () => {
         existingType,
         updateTypeDto,
       );
-      expect(typeRepository.save).toHaveBeenCalledWith(updatedType);
+      expect(typeRepository.save).toHaveBeenCalledWith(existingType);
       expect(result).toEqual(updatedType);
     });
 

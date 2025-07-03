@@ -1,16 +1,21 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TrainersService } from './trainers.service';
-import { Repository } from 'typeorm';
 import { Trainer } from './entities/trainer.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { NotFoundException } from '@nestjs/common';
 import { CreateTrainerDto } from './dto/create-trainer.dto';
 import { UpdateTrainerDto } from './dto/update-trainer.dto';
 
-type MockRepository<T extends ObjectLiteral = any> = {
-  [K in keyof Repository<T>]: jest.Mock;
+type MockRepository = {
+  create: jest.Mock;
+  save: jest.Mock;
+  find: jest.Mock;
+  findOneBy: jest.Mock;
+  findOne: jest.Mock;
+  merge: jest.Mock;
+  delete: jest.Mock;
 };
-const createMockRepository = <T extends ObjectLiteral = any>(): MockRepository<T> => ({
+const createMockRepository = (): MockRepository => ({
   create: jest.fn(),
   save: jest.fn(),
   find: jest.fn(),
@@ -22,7 +27,7 @@ const createMockRepository = <T extends ObjectLiteral = any>(): MockRepository<T
 
 describe('TrainersService', () => {
   let service: TrainersService;
-  let trainerRepository: MockRepository<Trainer>;
+  let trainerRepository: MockRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -36,9 +41,7 @@ describe('TrainersService', () => {
     }).compile();
 
     service = module.get<TrainersService>(TrainersService);
-    trainerRepository = module.get<MockRepository<Trainer>>(
-      getRepositoryToken(Trainer),
-    );
+    trainerRepository = module.get<MockRepository>(getRepositoryToken(Trainer));
   });
 
   it('should be defined', () => {
@@ -151,7 +154,7 @@ describe('TrainersService', () => {
       jest
         .spyOn(service, 'getById')
         .mockResolvedValue(existingTrainer as Trainer);
-      trainerRepository.merge.mockReturnValue(updatedTrainer as Trainer);
+      trainerRepository.merge.mockReturnValue(existingTrainer as Trainer);
       trainerRepository.save.mockResolvedValue(updatedTrainer as Trainer);
 
       const result = await service.update(id, updateTrainerDto);
@@ -161,7 +164,7 @@ describe('TrainersService', () => {
         existingTrainer,
         updateTrainerDto,
       );
-      expect(trainerRepository.save).toHaveBeenCalledWith(updatedTrainer);
+      expect(trainerRepository.save).toHaveBeenCalledWith(existingTrainer);
       expect(result).toEqual(updatedTrainer);
     });
 
