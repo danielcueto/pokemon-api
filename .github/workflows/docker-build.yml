@@ -28,5 +28,5 @@ jobs:
           file: Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/pokemon-api:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/pokemon-api:${{ github.sha }}
+            ${{ secrets.DOCKER_USERNAME }}/pokemon-api:latest
+            ${{ secrets.DOCKER_USERNAME }}/pokemon-api:${{ github.sha }}
